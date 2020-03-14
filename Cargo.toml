@@ -1,0 +1,7 @@
+[package]
+name = "kuran"
+version = "0.1.0"
+authors = ["ben lamothe <bl@732.one>"]
+edition = "2018"
+
+[dependencies]
