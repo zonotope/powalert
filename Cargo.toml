@@ -5,3 +5,5 @@ authors = ["ben lamothe <bl@732.one>"]
 edition = "2018"
 
 [dependencies]
+log = "0.4.8"
+simplelog = "0.7.4"
