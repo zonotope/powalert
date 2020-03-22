@@ -1,5 +1,5 @@
 [package]
-name = "kuran"
+name = "powalert"
 version = "0.1.0"
 authors = ["ben lamothe <bl@732.one>"]
 edition = "2018"
