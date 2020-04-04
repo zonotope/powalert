@@ -1,52 +1,10 @@
+mod snapshot;
+mod trigger;
+
 use crate::percentage::Percentage;
-use crate::trigger::Trigger;
+use snapshot::Snapshot;
 
-use battery::{Battery, Manager, State};
-
-#[derive(Default)]
-struct Snapshot {
-    state: State,
-    percentage: Percentage,
-}
-
-impl Snapshot {
-    fn plug_trigger(&self, prev: &Snapshot) -> Option<Trigger> {
-        if prev.state != self.state {
-            match self.state {
-                State::Charging => Some(Trigger::Plugged(true)),
-                State::Discharging => Some(Trigger::Plugged(false)),
-                _ => None,
-            }
-        } else {
-            None
-        }
-    }
-
-    fn full_trigger(&self, prev: &Snapshot) -> Option<Trigger> {
-        if (self.state == State::Full) && (prev.state != self.state) {
-            Some(Trigger::Full)
-        } else {
-            None
-        }
-    }
-
-    fn low_trigger(&self, prev: &Snapshot, thresh: Percentage) -> Option<Trigger> {
-        if (self.percentage <= thresh) && (prev.percentage > thresh) {
-            Some(Trigger::Low)
-        } else {
-            None
-        }
-    }
-}
-
-impl From<&Battery> for Snapshot {
-    fn from(bat: &Battery) -> Snapshot {
-        Snapshot {
-            state: bat.state(),
-            percentage: Percentage::from((bat.energy() / bat.energy_full()).value),
-        }
-    }
-}
+use battery::{Batteries, Battery, Manager};
 
 struct Trend {
     bat: Battery,
@@ -56,12 +14,30 @@ struct Trend {
 pub struct System {
     manager: Manager,
     trends: Vec<Trend>,
+    low_threshold: Percentage,
+}
+
+fn build_trends(bats: Batteries) -> Vec<Trend> {
+    bats.map(|r| match r {
+        Ok(bat) => Some(bat),
+        Err(e) => {
+            log::warn!("error loading battery: {}", e);
+            None
+        }
+    })
+    .filter(|opt| opt.is_some())
+    .map(|s| {
+        let bat = s.unwrap();
+        let prev = Snapshot::from(&bat);
+        Trend { bat, prev }
+    })
+    .collect()
 }
 
 impl System {
     pub fn load() -> Result<System, battery::Error> {
         log::debug!("initializing battery manager");
-        let manager = match battery::Manager::new() {
+        let manager = match Manager::new() {
             Ok(m) => m,
             Err(e) => {
                 log::error!("failed to initialize battery manager: {}", e);
@@ -69,72 +45,41 @@ impl System {
             }
         };
 
-        log::debug!("initializing battery trends");
-        let trends: Vec<Trend> = manager
-            .batteries()
-            .expect("failed to find batteries")
-            .map(|r| match r {
-                Ok(bat) => Some(bat),
-                Err(e) => {
-                    log::warn!("error loading battery: {}", e);
-                    None
-                }
-            })
-            .filter(|opt| opt.is_some())
-            .map(|s| {
-                let bat = s.unwrap();
-                let prev = Snapshot::from(&bat);
-                Trend {
-                    bat: bat,
-                    prev: prev,
-                }
-            })
-            .collect();
+        log::debug!("tracking battery trends");
+        let trends = match manager.batteries() {
+            Ok(bats) => build_trends(bats),
+            Err(e) => {
+                log::error!("failed to find batteries: {}", e);
+                return Err(e);
+            }
+        };
+
+        let low_threshold = Percentage::from(0.2);
 
         return Ok(System {
-            manager: manager,
-            trends: trends,
+            manager,
+            trends,
+            low_threshold,
         });
     }
 
-    pub fn step(&mut self) -> Option<Vec<Trigger>> {
-        let mut triggers = Vec::<Trigger>::new();
+    pub fn step(&mut self) {
         for trend in &mut self.trends.iter_mut() {
             log::debug!("reading battery status");
-
-            match self.manager.refresh(&mut trend.bat) {
-                Err(e) => {
-                    log::warn!("couldn't read battery state {}", e);
-                    continue;
-                }
-                _ => (),
+            if let Err(e) = self.manager.refresh(&mut trend.bat) {
+                log::error!("couldn't read battery state {}", e);
+                continue;
             }
 
             let curr = Snapshot::from(&trend.bat);
 
-            match curr.plug_trigger(&trend.prev) {
-                Some(t) => triggers.push(t),
-                None => (),
-            }
-
-            match curr.full_trigger(&trend.prev) {
-                Some(t) => triggers.push(t),
-                None => (),
-            }
-
-            let twenty_percent = Percentage::from(0.2);
-            match curr.low_trigger(&trend.prev, twenty_percent) {
-                Some(t) => triggers.push(t),
-                None => (),
+            if let Some(trgs) = curr.triggers(&trend.prev, &self.low_threshold) {
+                for trg in trgs.iter() {
+                    trg.notify()
+                }
             }
 
             trend.prev = curr;
-        }
-
-        if triggers.len() > 0 {
-            Some(triggers)
-        } else {
-            None
         }
     }
 }

@@ -1,9 +1,7 @@
 mod percentage;
 mod system;
-mod trigger;
 
 use crate::system::System;
-use crate::trigger::Trigger;
 
 use std::{thread, time};
 
@@ -17,8 +15,6 @@ fn init_logging() {
 
     SimpleLogger::init(level, conf).expect("failed to start logger");
 }
-
-fn notify(_triggers: Vec<Trigger>) {}
 
 fn main() {
     init_logging();
@@ -34,16 +30,13 @@ fn main() {
         }
     };
 
-    let five_secs = time::Duration::from_secs(5);
+    let one_sec = time::Duration::from_secs(1);
 
     log::info!("watching system power state");
     loop {
         log::debug!("reading current system state");
-        match system.step() {
-            Some(triggers) => notify(triggers),
-            None => (),
-        }
+        system.step();
 
-        thread::sleep(five_secs);
+        thread::sleep(one_sec);
     }
 }
