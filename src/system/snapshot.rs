@@ -19,9 +19,9 @@ impl Snapshot {
 
         if prev.state != self.state {
             match self.state {
-                State::Charging => triggers.push(Trigger::Plugged(true)),
+                State::Charging => triggers.push(Trigger::Plugged),
                 State::Discharging => {
-                    triggers.push(Trigger::Plugged(false));
+                    triggers.push(Trigger::Unplugged);
 
                     if &self.percentage <= low_thresh {
                         triggers.push(Trigger::Low);

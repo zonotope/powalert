@@ -1,7 +1,8 @@
 use notify_rust::{Notification, NotificationUrgency};
 
 pub enum Trigger {
-    Plugged(bool),
+    Plugged,
+    Unplugged,
     Full,
     Low,
 }
@@ -11,8 +12,8 @@ impl From<&Trigger> for Notification {
         let mut n = Notification::new();
 
         match t {
-            Trigger::Plugged(true) => n.summary("plugged in").icon("battery_plugged"),
-            Trigger::Plugged(false) => n.summary("unplugged"),
+            Trigger::Plugged => n.summary("Plugged In").icon("battery-charging-050"),
+            Trigger::Unplugged => n.summary("Unplugged").icon("battery-050"),
             Trigger::Full => n.summary("Fully Charged").icon("battery-full-charged"),
             Trigger::Low => n
                 .summary("Low Battery")
