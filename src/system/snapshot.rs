@@ -35,7 +35,7 @@ impl From<&Battery> for Snapshot {
     fn from(bat: &Battery) -> Snapshot {
         Snapshot {
             state: bat.state(),
-            percentage: Percentage::from((bat.energy() / bat.energy_full()).value),
+            percentage: Percentage::from(&bat),
         }
     }
 }

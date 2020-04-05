@@ -1,3 +1,4 @@
+use battery::Battery;
 use std::cmp::Ordering;
 use std::fmt;
 
@@ -9,6 +10,12 @@ pub struct Percentage {
 impl From<f32> for Percentage {
     fn from(v: f32) -> Percentage {
         Percentage { value: v }
+    }
+}
+
+impl From<&Battery> for Percentage {
+    fn from(bat: &Battery) -> Percentage {
+        Self::from((bat.energy() / bat.energy_full()).value)
     }
 }
 
