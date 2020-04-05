@@ -67,11 +67,12 @@ impl System {
         for trend in &mut self.trends.iter_mut() {
             log::debug!("reading battery status");
             if let Err(e) = self.manager.refresh(&mut trend.bat) {
-                log::error!("couldn't read battery state {}", e);
+                log::error!("couldn't read battery status {}", e);
                 continue;
             }
 
             let curr = Snapshot::from(&trend.bat);
+            log::debug!("battery status is {}", curr);
 
             if let Some(trgs) = curr.triggers(&trend.prev, &self.low_threshold) {
                 for trg in trgs.iter() {
