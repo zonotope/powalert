@@ -1,9 +1,9 @@
 mod notification;
 mod snapshot;
 
-use crate::percentage::Percentage;
 use snapshot::Snapshot;
 
+use battery::units::Ratio;
 use battery::{Batteries, Battery, Manager};
 
 struct Trend {
@@ -14,7 +14,7 @@ struct Trend {
 pub struct System {
     manager: Manager,
     trends: Vec<Trend>,
-    low_threshold: Percentage,
+    low_threshold: Ratio,
 }
 
 fn build_trends(bats: Batteries) -> Vec<Trend> {
@@ -54,7 +54,7 @@ impl System {
             }
         };
 
-        let low_threshold = Percentage::from(0.2);
+        let low_threshold = Ratio::from(0.2);
 
         return Ok(System {
             manager,

@@ -1,12 +1,11 @@
-use crate::percentage::Percentage;
-
+use battery::units::Ratio;
 use battery::{Battery, State};
 use std::fmt;
 
 #[derive(Default)]
 pub struct Snapshot {
     state: State,
-    percentage: Percentage,
+    percentage: Ratio,
 }
 
 impl Snapshot {
@@ -22,11 +21,11 @@ impl Snapshot {
         (self.state == State::Full) && (prev.state != self.state)
     }
 
-    pub fn did_deplete(&self, prev: &Snapshot, low_thresh: &Percentage) -> bool {
+    pub fn did_deplete(&self, prev: &Snapshot, low_thresh: &Ratio) -> bool {
         self.is_below(low_thresh) && (&prev.percentage > low_thresh)
     }
 
-    pub fn is_below(&self, low_thresh: &Percentage) -> bool {
+    pub fn is_below(&self, low_thresh: &Ratio) -> bool {
         &self.percentage <= low_thresh
     }
 }
@@ -35,13 +34,13 @@ impl From<&Battery> for Snapshot {
     fn from(bat: &Battery) -> Snapshot {
         Snapshot {
             state: bat.state(),
-            percentage: Percentage::from(&bat),
+            percentage: bat.state_of_charge(),
         }
     }
 }
 
 impl fmt::Display for Snapshot {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} at {}", self.state, self.percentage)
+        write!(f, "{} at {}", self.state, self.percentage.value)
     }
 }
