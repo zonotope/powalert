@@ -80,6 +80,10 @@ impl System {
 
             if curr.did_unplug(&trend.prev) {
                 notification::send_unplugged(&trend.bat);
+
+                if curr.is_below(&self.low_threshold) {
+                    notification::send_low(&trend.bat)
+                }
             }
 
             if curr.did_fill(&trend.prev) {

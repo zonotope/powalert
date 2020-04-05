@@ -23,7 +23,11 @@ impl Snapshot {
     }
 
     pub fn did_deplete(&self, prev: &Snapshot, low_thresh: &Percentage) -> bool {
-        (&self.percentage <= low_thresh) && (&prev.percentage > low_thresh)
+        self.is_below(low_thresh) && (&prev.percentage > low_thresh)
+    }
+
+    pub fn is_below(&self, low_thresh: &Percentage) -> bool {
+        &self.percentage <= low_thresh
     }
 }
 
