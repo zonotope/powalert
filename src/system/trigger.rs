@@ -1,4 +1,4 @@
-use notify_rust::Notification;
+use notify_rust::{Notification, NotificationUrgency};
 
 pub enum Trigger {
     Plugged(bool),
@@ -13,8 +13,11 @@ impl From<&Trigger> for Notification {
         match t {
             Trigger::Plugged(true) => n.summary("plugged in").icon("battery_plugged"),
             Trigger::Plugged(false) => n.summary("unplugged"),
-            Trigger::Full => n.summary("full"),
-            Trigger::Low => n.summary("low"),
+            Trigger::Full => n.summary("Fully Charged").icon("battery-full-charged"),
+            Trigger::Low => n
+                .summary("Low Battery")
+                .icon("battery-caution")
+                .urgency(NotificationUrgency::Critical),
         };
 
         return n;
