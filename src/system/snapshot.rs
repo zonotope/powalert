@@ -2,6 +2,7 @@ use crate::percentage::Percentage;
 use crate::system::trigger::Trigger;
 
 use battery::{Battery, State};
+use std::fmt;
 
 #[derive(Default)]
 pub struct Snapshot {
@@ -46,5 +47,11 @@ impl From<&Battery> for Snapshot {
             state: bat.state(),
             percentage: Percentage::from((bat.energy() / bat.energy_full()).value),
         }
+    }
+}
+
+impl fmt::Display for Snapshot {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} at {}", self.state, self.percentage)
     }
 }

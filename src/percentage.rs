@@ -1,4 +1,5 @@
 use std::cmp::Ordering;
+use std::fmt;
 
 #[derive(Default)]
 pub struct Percentage {
@@ -20,5 +21,12 @@ impl PartialOrd for Percentage {
 impl PartialEq for Percentage {
     fn eq(&self, other: &Percentage) -> bool {
         self.value == other.value
+    }
+}
+
+impl fmt::Display for Percentage {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let display_val = self.value * 100.0;
+        write!(f, "{}%", display_val)
     }
 }
