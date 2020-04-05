@@ -3,6 +3,7 @@ mod trigger;
 
 use crate::percentage::Percentage;
 use snapshot::Snapshot;
+use trigger::Trigger;
 
 use battery::{Batteries, Battery, Manager};
 
@@ -74,10 +75,20 @@ impl System {
             let curr = Snapshot::from(&trend.bat);
             log::debug!("battery status is {}", curr);
 
-            if let Some(trgs) = curr.triggers(&trend.prev, &self.low_threshold) {
-                for trg in trgs.iter() {
-                    trg.notify()
-                }
+            if curr.did_plug(&trend.prev) {
+                Trigger::Plugged.notify();
+            }
+
+            if curr.did_unplug(&trend.prev) {
+                Trigger::Unplugged.notify();
+            }
+
+            if curr.did_fill(&trend.prev) {
+                Trigger::Full.notify();
+            }
+
+            if curr.did_deplete(&trend.prev, &self.low_threshold) {
+                Trigger::Low.notify();
             }
 
             trend.prev = curr;

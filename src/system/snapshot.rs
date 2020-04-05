@@ -1,5 +1,4 @@
 use crate::percentage::Percentage;
-use crate::system::trigger::Trigger;
 
 use battery::{Battery, State};
 use std::fmt;
@@ -11,33 +10,20 @@ pub struct Snapshot {
 }
 
 impl Snapshot {
-    pub fn triggers(&self, prev: &Snapshot, low_thresh: &Percentage) -> Option<Vec<Trigger>> {
-        let mut triggers = Vec::<Trigger>::new();
+    pub fn did_plug(&self, prev: &Snapshot) -> bool {
+        (self.state == State::Charging) && (prev.state != self.state)
+    }
 
-        if (&self.percentage <= low_thresh) && (&prev.percentage > low_thresh) {
-            triggers.push(Trigger::Low);
-        }
+    pub fn did_unplug(&self, prev: &Snapshot) -> bool {
+        (self.state == State::Discharging) && (prev.state != self.state)
+    }
 
-        if prev.state != self.state {
-            match self.state {
-                State::Charging => triggers.push(Trigger::Plugged),
-                State::Discharging => {
-                    triggers.push(Trigger::Unplugged);
+    pub fn did_fill(&self, prev: &Snapshot) -> bool {
+        (self.state == State::Full) && (prev.state != self.state)
+    }
 
-                    if &self.percentage <= low_thresh {
-                        triggers.push(Trigger::Low);
-                    }
-                }
-                State::Full => triggers.push(Trigger::Full),
-                _ => (),
-            }
-        }
-
-        if triggers.len() > 0 {
-            return Some(triggers);
-        }
-
-        None
+    pub fn did_deplete(&self, prev: &Snapshot, low_thresh: &Percentage) -> bool {
+        (&self.percentage <= low_thresh) && (&prev.percentage > low_thresh)
     }
 }
 
