@@ -5,18 +5,18 @@ use crate::system::System;
 use std::{thread, time};
 
 use simplelog::Config as LogConfig;
-use simplelog::LevelFilter as LogLevelFilter;
-use simplelog::SimpleLogger;
+use simplelog::LevelFilter as LogLevel;
+use simplelog::SimpleLogger as Logger;
 
-fn init_logging() {
+fn log_init() {
     let conf = LogConfig::default();
-    let level = LogLevelFilter::Info;
+    let level = LogLevel::Info;
 
-    SimpleLogger::init(level, conf).expect("failed to start logger");
+    Logger::init(level, conf).expect("failed to start logger");
 }
 
 fn main() {
-    init_logging();
+    log_init();
 
     log::info!("Power notifier starting");
 

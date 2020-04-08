@@ -75,22 +75,27 @@ impl System {
             log::debug!("battery status is {}", curr);
 
             if curr.did_plug(&trend.prev) {
+                log::info!("Sending charging notification");
                 notification::send_plugged(&trend.bat)
             }
 
             if curr.did_unplug(&trend.prev) {
+                log::info!("Sending unplugged notification");
                 notification::send_unplugged(&trend.bat);
 
                 if curr.is_below(&self.low_threshold) {
+                    log::info!("Sending low power notification after unplug");
                     notification::send_low(&trend.bat)
                 }
             }
 
             if curr.did_fill(&trend.prev) {
+                log::info!("Sending full notification");
                 notification::send_full(&trend.bat)
             }
 
             if curr.did_deplete(&trend.prev, &self.low_threshold) {
+                log::info!("Sending low power notification");
                 notification::send_low(&trend.bat)
             }
 

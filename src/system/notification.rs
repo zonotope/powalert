@@ -15,20 +15,15 @@ fn icon_level(p: Ratio) -> String {
 
 pub fn send_plugged(bat: &Battery) {
     let icon_name = format!("battery-charging-{}", icon_level(bat.state_of_charge()));
-
-    log::info!("Sending charging notification");
     send(Notification::new().summary("Plugged In").icon(&icon_name))
 }
 
 pub fn send_unplugged(bat: &Battery) {
     let icon_name = format!("battery-{}", icon_level(bat.state_of_charge()));
-
-    log::info!("Sending unplugged notification");
     send(Notification::new().summary("Unplugged").icon(&icon_name))
 }
 
 pub fn send_full(_bat: &Battery) {
-    log::info!("Sending full notification");
     send(
         Notification::new()
             .summary("Fully Charged")
@@ -37,7 +32,6 @@ pub fn send_full(_bat: &Battery) {
 }
 
 pub fn send_low(_bat: &Battery) {
-    log::info!("Sending low power notification");
     send(
         Notification::new()
             .summary("Low Battery")
