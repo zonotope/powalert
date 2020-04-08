@@ -1,37 +1,17 @@
 mod notification;
 mod snapshot;
+mod trend;
 
 use snapshot::Snapshot;
+use trend::Trend;
 
 use battery::units::Ratio;
-use battery::{Batteries, Battery, Manager};
-
-struct Trend {
-    bat: Battery,
-    prev: Snapshot,
-}
+use battery::Manager;
 
 pub struct System {
     manager: Manager,
     trends: Vec<Trend>,
     low_threshold: Ratio,
-}
-
-fn build_trends(bats: Batteries) -> Vec<Trend> {
-    bats.map(|r| match r {
-        Ok(bat) => Some(bat),
-        Err(e) => {
-            log::warn!("error loading battery: {}", e);
-            None
-        }
-    })
-    .filter(|opt| opt.is_some())
-    .map(|s| {
-        let bat = s.unwrap();
-        let prev = Snapshot::from(&bat);
-        Trend { bat, prev }
-    })
-    .collect()
 }
 
 impl System {
@@ -47,7 +27,7 @@ impl System {
 
         log::debug!("tracking battery trends");
         let trends = match manager.batteries() {
-            Ok(bats) => build_trends(bats),
+            Ok(bats) => Trend::from_batteries(bats),
             Err(e) => {
                 log::error!("failed to find batteries: {}", e);
                 return Err(e);
