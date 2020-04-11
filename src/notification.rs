@@ -1,3 +1,5 @@
+use battery::units::ratio::percent;
+
 use std::time::Duration;
 
 use battery::units::time::second;
@@ -5,15 +7,13 @@ use battery::units::{Ratio, Time};
 use battery::Battery;
 use notify_rust::{Notification, NotificationUrgency};
 
-fn send(n: &mut Notification) {
-    if let Err(e) = n.show() {
-        log::error!("failed to send notification: {}", e)
-    }
+fn icon_level(r: Ratio) -> String {
+    let level = (r.value * 10.0).round();
+    format!("{:02}0", level)
 }
 
-fn icon_level(p: Ratio) -> String {
-    let level = (p.value * 10.0).round();
-    format!("{:02}0", level)
+fn percent_str(r: Ratio) -> String {
+    format!("({}%)", r.get::<percent>())
 }
 
 fn time_string(time: Option<Time>, post: &str) -> String {
@@ -28,45 +28,49 @@ fn time_string(time: Option<Time>, post: &str) -> String {
     }
 }
 
-pub fn send_plugged(bat: &Battery) {
+pub fn plugged(bat: &Battery) -> Notification {
     let icon_name = format!("battery-charging-{}", icon_level(bat.state_of_charge()));
+
+    let percentage = percent_str(bat.state_of_charge());
     let full_time = time_string(bat.time_to_full(), "until full");
-    let body = format!("On external power{}", full_time);
+    let body = format!("Charging battery {}{}", percentage, full_time);
 
-    send(
-        Notification::new()
-            .icon(&icon_name)
-            .summary("Charging")
-            .body(&body),
-    )
+    let mut note = Notification::new();
+    note.icon(&icon_name).summary("Plugged In").body(&body);
+
+    note
 }
 
-pub fn send_unplugged(bat: &Battery) {
+pub fn unplugged(bat: &Battery) -> Notification {
     let icon_name = format!("battery-{}", icon_level(bat.state_of_charge()));
+
+    let percentage = percent_str(bat.state_of_charge());
     let empty_time = time_string(bat.time_to_empty(), "until empty");
-    let body = format!("On battery power{}", empty_time);
+    let body = format!("On battery power {}{}", percentage, empty_time);
 
-    send(
-        Notification::new()
-            .icon(&icon_name)
-            .summary("Unplugged")
-            .body(&body),
-    )
+    let mut note = Notification::new();
+    note.icon(&icon_name).summary("Unplugged").body(&body);
+
+    note
 }
 
-pub fn send_full(_bat: &Battery) {
-    send(
-        Notification::new()
-            .icon("battery-full-charged")
-            .summary("Fully Charged"),
-    )
+pub fn full(_bat: &Battery) -> Notification {
+    let mut note = Notification::new();
+    note.icon("battery-full-charged").summary("Fully Charged");
+
+    note
 }
 
-pub fn send_low(_bat: &Battery) {
-    send(
-        Notification::new()
-            .icon("battery-caution")
-            .summary("Low Battery")
-            .urgency(NotificationUrgency::Critical),
-    )
+pub fn low(bat: &Battery) -> Notification {
+    let percentage = percent_str(bat.state_of_charge());
+    let empty_time = time_string(bat.time_to_empty(), "until empty");
+    let body = format!("On battery power {}{}", percentage, empty_time);
+
+    let mut note = Notification::new();
+    note.icon("battery-caution")
+        .summary("Battery Low")
+        .body(&body)
+        .urgency(NotificationUrgency::Critical);
+
+    note
 }
