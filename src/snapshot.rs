@@ -42,6 +42,6 @@ impl From<&Battery> for Snapshot {
 
 impl fmt::Display for Snapshot {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} at {:.2}%", self.state, self.charge.get::<percent>())
+        write!(f, "{} at {}%", self.state, self.charge.get::<percent>())
     }
 }
