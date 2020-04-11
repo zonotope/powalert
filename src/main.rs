@@ -5,11 +5,9 @@ use simplelog::LevelFilter as LogLevel;
 use simplelog::SimpleLogger as Logger;
 
 mod notification;
-mod snapshot;
 mod trend;
 
-use snapshot::Snapshot;
-use trend::Trend;
+use trend::{Snapshot, Trend};
 
 use battery::units::Ratio;
 use battery::Manager;
