@@ -1,4 +1,4 @@
-use crate::system::snapshot::Snapshot;
+use crate::snapshot::Snapshot;
 
 use battery::{Batteries, Battery};
 
