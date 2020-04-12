@@ -32,8 +32,8 @@ impl Snapshot {
 }
 
 impl From<&Battery> for Snapshot {
-    fn from(bat: &Battery) -> Snapshot {
-        Snapshot {
+    fn from(bat: &Battery) -> Self {
+        Self {
             state: bat.state(),
             charge: bat.state_of_charge(),
         }
