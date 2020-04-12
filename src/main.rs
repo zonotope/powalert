@@ -7,6 +7,7 @@ use std::thread;
 use std::time::Duration;
 
 use clap::{App, Arg, ArgMatches};
+
 use simplelog::Config as LogConfig;
 use simplelog::LevelFilter as LogLevel;
 use simplelog::SimpleLogger as Logger;
