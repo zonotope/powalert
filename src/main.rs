@@ -1,12 +1,10 @@
-use std::num::{ParseFloatError, ParseIntError};
-use std::thread;
-use std::time::Duration;
-
-mod notification;
-mod snapshot;
 mod system;
 
 use system::System;
+
+use std::num::{ParseFloatError, ParseIntError};
+use std::thread;
+use std::time::Duration;
 
 use clap::{App, Arg, ArgMatches};
 use simplelog::Config as LogConfig;

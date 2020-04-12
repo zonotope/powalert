@@ -1,5 +1,7 @@
-use crate::notification;
-use crate::snapshot::Snapshot;
+mod notification;
+mod snapshot;
+
+use snapshot::Snapshot;
 
 use battery::units::Ratio;
 use battery::{Batteries, Battery, Manager};
