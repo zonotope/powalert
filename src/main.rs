@@ -44,13 +44,13 @@ fn cli<'a, 'b>() -> App<'a, 'b> {
 fn parse_interval(opts: &ArgMatches) -> Result<Duration, ParseIntError> {
     let i = opts.value_of("interval").unwrap_or("1").parse::<u64>()?;
 
-    return Ok(Duration::from_secs(i));
+    Ok(Duration::from_secs(i))
 }
 
 fn parse_threshold(opts: &ArgMatches) -> Result<Ratio, ParseFloatError> {
     let f = opts.value_of("interval").unwrap_or("20").parse::<f32>()?;
 
-    return Ok(Ratio::from(f / 100.0));
+    Ok(Ratio::from(f / 100.0))
 }
 
 fn parse_verbosity(opts: &ArgMatches) -> LogLevel {
@@ -87,7 +87,7 @@ fn main() {
 
     log::info!("monitoring system power state");
     loop {
-        system.step();
+        system.update_and_notify();
 
         thread::sleep(interval);
     }

@@ -39,7 +39,7 @@ impl System {
         });
     }
 
-    pub fn step(&mut self) {
+    pub fn update_and_notify(&mut self) {
         log::debug!("reading current system state");
 
         for trend in &mut self.trends.iter_mut() {
