@@ -32,11 +32,11 @@ impl System {
             }
         };
 
-        return Ok(Self {
+        Ok(Self {
             manager,
             trends,
             low_threshold,
-        });
+        })
     }
 
     pub fn update_and_notify(&mut self) {

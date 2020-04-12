@@ -61,11 +61,14 @@ impl Trend {
             }
         })
         .filter(|opt| opt.is_some())
-        .map(|s| {
-            let bat = s.unwrap();
-            let prev = Snapshot::from(&bat);
-            Self { bat, prev }
-        })
+        .map(|b| Self::from(b.unwrap()))
         .collect()
+    }
+}
+
+impl From<Battery> for Trend {
+    fn from(bat: Battery) -> Self {
+        let prev = Snapshot::from(&bat);
+        Self { bat, prev }
     }
 }
