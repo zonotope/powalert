@@ -73,6 +73,8 @@ impl System {
     }
 
     pub fn step(&mut self) {
+        log::debug!("reading current system state");
+
         for trend in &mut self.trends.iter_mut() {
             log::debug!("reading battery status");
             if let Err(e) = self.manager.refresh(&mut trend.bat) {
@@ -82,6 +84,7 @@ impl System {
 
             let curr = Snapshot::from(&trend.bat);
             log::debug!("battery status is {}", curr);
+            log::debug!("previous status: {}", trend.prev);
 
             if curr.did_plug(&trend.prev) {
                 let plugged_note = notification::plugged(&trend.bat);
@@ -192,20 +195,19 @@ fn main() {
 
     init_logging(log_level);
 
-    log::info!("Power notifier starting");
+    log::info!("powalert power notifier starting");
 
     log::debug!("initializing system");
     let mut system = match System::load(threshold) {
         Ok(s) => s,
         Err(e) => {
-            log::error!("initializing system: {}", e);
+            log::error!("failed to initialize system: {}", e);
             return;
         }
     };
 
-    log::info!("watching system power state");
+    log::info!("monitoring system power state");
     loop {
-        log::debug!("reading current system state");
         system.step();
 
         thread::sleep(interval);
