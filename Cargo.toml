@@ -1,6 +1,6 @@
 [package]
 name = "powalert"
-version = "0.1.0"
+version = "0.1.0-alpha1"
 authors = ["ben lamothe <bl@732.one>"]
 edition = "2018"
 
