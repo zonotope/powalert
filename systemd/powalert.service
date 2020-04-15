@@ -1,0 +1,9 @@
+[Unit]
+Description=System battery and power status notifier.
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/powalert
+
+[Install]
+WantedBy=graphical.target
