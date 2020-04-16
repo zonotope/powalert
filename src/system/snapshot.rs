@@ -22,12 +22,12 @@ impl Snapshot {
         (self.state == State::Full) && (prev.state != self.state)
     }
 
-    pub fn did_deplete(&self, prev: &Snapshot, low_thresh: &Ratio) -> bool {
-        self.is_below(low_thresh) && (&prev.charge > low_thresh)
+    pub fn did_deplete(&self, prev: &Snapshot, low_thresh: Ratio) -> bool {
+        self.is_below(low_thresh) && (prev.charge > low_thresh)
     }
 
-    pub fn is_below(&self, low_thresh: &Ratio) -> bool {
-        &self.charge <= low_thresh
+    pub fn is_below(&self, low_thresh: Ratio) -> bool {
+        self.charge <= low_thresh
     }
 }
 

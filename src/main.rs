@@ -57,7 +57,7 @@ fn parse_verbosity(opts: &ArgMatches) -> LogLevel {
     match opts.value_of("verbose").unwrap_or("0") {
         "0" => LogLevel::Warn,
         "1" => LogLevel::Info,
-        "2" | _ => LogLevel::Debug,
+        _ => LogLevel::Debug,
     }
 }
 
