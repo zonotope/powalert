@@ -45,7 +45,7 @@ pub fn unplugged(bat: &Battery) -> Notification {
     let icon_name = format!("battery-{}", icon_level(bat.state_of_charge()));
 
     let percentage = percent_str(bat.state_of_charge());
-    let empty_time = time_string(bat.time_to_empty(), "until empty");
+    let empty_time = time_string(bat.time_to_empty(), "left");
     let body = format!("On battery power {}{}", percentage, empty_time);
 
     let mut note = Notification::new();
@@ -63,8 +63,8 @@ pub fn full(_bat: &Battery) -> Notification {
 
 pub fn low(bat: &Battery) -> Notification {
     let percentage = percent_str(bat.state_of_charge());
-    let empty_time = time_string(bat.time_to_empty(), "until empty");
-    let body = format!("On battery power {}{}", percentage, empty_time);
+    let empty_time = time_string(bat.time_to_empty(), "left");
+    let body = format!("Power level is almost empty {}{}", percentage, empty_time);
 
     let mut note = Notification::new();
     note.icon("battery-caution")
