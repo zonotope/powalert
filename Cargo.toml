@@ -1,7 +1,11 @@
 [package]
 name = "powalert"
-version = "0.1.0-alpha1"
+version = "0.1.0-alpha2"
 authors = ["ben lamothe <bl@732.one>"]
+license = "MIT"
+description = "System battery and power status notifier."
+homepage = "https://github.com/zonotope/powalert"
+keywords = ["battery", "power", "notification"]
 edition = "2018"
 
 [dependencies]
