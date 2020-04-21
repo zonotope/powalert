@@ -80,64 +80,67 @@ impl System {
             log::debug!("battery status is {}", curr);
             log::debug!("previous status: {}", trend.prev);
 
-            notify_plugged(&curr, &trend.prev);
-            notify_unplugged(&curr, &trend.prev, self.low_threshold);
-            notify_full(&curr, &trend.prev);
-            notify_low(&curr, &trend.prev, self.low_threshold);
+            if curr.did_plug(&trend.prev) {
+                notify_plugged(&curr);
+            }
+
+            if curr.did_unplug(&trend.prev) {
+                notify_unplugged(&curr, self.low_threshold);
+            }
+
+            if curr.did_fill(&trend.prev) {
+                notify_full(&curr);
+            }
+
+            if curr.did_deplete(&trend.prev, self.low_threshold) {
+                notify_low(&curr);
+            }
 
             trend.prev = curr;
         }
     }
 }
 
-fn notify_plugged(curr: &Snapshot, prev: &Snapshot) {
-    if curr.did_plug(prev) {
-        let plugged_note = notification::plugged(curr);
+fn notify_plugged(curr: &Snapshot) {
+    let plugged_note = notification::plugged(curr);
 
-        log::info!("Sending charging notification");
-        if let Err(e) = plugged_note.show() {
-            log::error!("failed to send charging notification: {}", e)
-        }
+    log::info!("Sending charging notification");
+    if let Err(e) = plugged_note.show() {
+        log::error!("failed to send charging notification: {}", e)
     }
 }
 
-fn notify_unplugged(curr: &Snapshot, prev: &Snapshot, threshold: Ratio) {
-    if curr.did_unplug(prev) {
-        let unplugged_note = notification::unplugged(curr);
+fn notify_unplugged(curr: &Snapshot, threshold: Ratio) {
+    let unplugged_note = notification::unplugged(curr);
 
-        log::info!("Sending unplugged notification");
-        if let Err(e) = unplugged_note.show() {
+    log::info!("Sending unplugged notification");
+    if let Err(e) = unplugged_note.show() {
+        log::error!("failed to send unplugged notification: {}", e)
+    }
+
+    if curr.is_below(threshold) {
+        let low_note = notification::low(curr);
+
+        log::info!("Sending low power notification after unplug");
+        if let Err(e) = low_note.show() {
             log::error!("failed to send unplugged notification: {}", e)
         }
-
-        if curr.is_below(threshold) {
-            let low_note = notification::low(curr);
-
-            log::info!("Sending low power notification after unplug");
-            if let Err(e) = low_note.show() {
-                log::error!("failed to send unplugged notification: {}", e)
-            }
-        }
     }
 }
 
-fn notify_full(curr: &Snapshot, prev: &Snapshot) {
-    if curr.did_fill(prev) {
-        let full_note = notification::full(curr);
+fn notify_full(curr: &Snapshot) {
+    let full_note = notification::full(curr);
 
-        log::info!("Sending full notification");
-        if let Err(e) = full_note.show() {
-            log::error!("failed to send full notification: {}", e)
-        }
+    log::info!("Sending full notification");
+    if let Err(e) = full_note.show() {
+        log::error!("failed to send full notification: {}", e)
     }
 }
 
-fn notify_low(curr: &Snapshot, prev: &Snapshot, thresh: Ratio) {
-    if curr.did_deplete(prev, thresh) {
-        let low_note = notification::low(curr);
-        log::info!("Sending low power notification");
-        if let Err(e) = low_note.show() {
-            log::error!("failed to send low notification: {}", e)
-        }
+fn notify_low(curr: &Snapshot) {
+    let low_note = notification::low(curr);
+    log::info!("Sending low power notification");
+    if let Err(e) = low_note.show() {
+        log::error!("failed to send low notification: {}", e)
     }
 }
