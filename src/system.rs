@@ -65,7 +65,7 @@ impl System {
 
 fn notify_plugged(trend: &Trend, curr: &Snapshot) {
     if curr.did_plug(&trend.prev) {
-        let plugged_note = notification::plugged(&trend.bat);
+        let plugged_note = notification::plugged(&curr);
 
         log::info!("Sending charging notification");
         if let Err(e) = plugged_note.show() {
@@ -76,7 +76,7 @@ fn notify_plugged(trend: &Trend, curr: &Snapshot) {
 
 fn notify_unplugged(trend: &Trend, curr: &Snapshot, threshold: Ratio) {
     if curr.did_unplug(&trend.prev) {
-        let unplugged_note = notification::unplugged(&trend.bat);
+        let unplugged_note = notification::unplugged(&curr);
 
         log::info!("Sending unplugged notification");
         if let Err(e) = unplugged_note.show() {
@@ -84,7 +84,7 @@ fn notify_unplugged(trend: &Trend, curr: &Snapshot, threshold: Ratio) {
         }
 
         if curr.is_below(threshold) {
-            let low_note = notification::low(&trend.bat);
+            let low_note = notification::low(&curr);
 
             log::info!("Sending low power notification after unplug");
             if let Err(e) = low_note.show() {
@@ -96,7 +96,7 @@ fn notify_unplugged(trend: &Trend, curr: &Snapshot, threshold: Ratio) {
 
 fn notify_full(trend: &Trend, curr: &Snapshot) {
     if curr.did_fill(&trend.prev) {
-        let full_note = notification::full(&trend.bat);
+        let full_note = notification::full(&curr);
 
         log::info!("Sending full notification");
         if let Err(e) = full_note.show() {
@@ -107,7 +107,7 @@ fn notify_full(trend: &Trend, curr: &Snapshot) {
 
 fn notify_low(trend: &Trend, curr: &Snapshot, thresh: Ratio) {
     if curr.did_deplete(&trend.prev, thresh) {
-        let low_note = notification::low(&trend.bat);
+        let low_note = notification::low(&curr);
         log::info!("Sending low power notification");
         if let Err(e) = low_note.show() {
             log::error!("failed to send low notification: {}", e)

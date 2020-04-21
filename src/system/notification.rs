@@ -1,10 +1,11 @@
-use battery::units::ratio::percent;
+use super::snapshot::Snapshot;
 
 use std::time::Duration;
 
+use battery::units::ratio::percent;
 use battery::units::time::second;
 use battery::units::{Ratio, Time};
-use battery::Battery;
+
 use notify_rust::{Notification, NotificationUrgency};
 
 fn icon_level(r: Ratio) -> String {
@@ -28,11 +29,11 @@ fn time_string(time: Option<Time>, post: &str) -> String {
     }
 }
 
-pub fn plugged(bat: &Battery) -> Notification {
-    let icon_name = format!("battery-charging-{}", icon_level(bat.state_of_charge()));
+pub fn plugged(snap: &Snapshot) -> Notification {
+    let icon_name = format!("battery-charging-{}", icon_level(snap.charge()));
 
-    let percentage = percent_str(bat.state_of_charge());
-    let full_time = time_string(bat.time_to_full(), "until full");
+    let percentage = percent_str(snap.charge());
+    let full_time = time_string(snap.full_time(), "until full");
     let body = format!("Charging battery {}{}", percentage, full_time);
 
     let mut note = Notification::new();
@@ -41,11 +42,11 @@ pub fn plugged(bat: &Battery) -> Notification {
     note
 }
 
-pub fn unplugged(bat: &Battery) -> Notification {
-    let icon_name = format!("battery-{}", icon_level(bat.state_of_charge()));
+pub fn unplugged(snap: &Snapshot) -> Notification {
+    let icon_name = format!("battery-{}", icon_level(snap.charge()));
 
-    let percentage = percent_str(bat.state_of_charge());
-    let empty_time = time_string(bat.time_to_empty(), "left");
+    let percentage = percent_str(snap.charge());
+    let empty_time = time_string(snap.empty_time(), "left");
     let body = format!("On battery power {}{}", percentage, empty_time);
 
     let mut note = Notification::new();
@@ -54,21 +55,21 @@ pub fn unplugged(bat: &Battery) -> Notification {
     note
 }
 
-pub fn full(_bat: &Battery) -> Notification {
+pub fn full(_snap: &Snapshot) -> Notification {
     let mut note = Notification::new();
     note.icon("battery-full-charged").summary("Fully Charged");
 
     note
 }
 
-pub fn low(bat: &Battery) -> Notification {
-    let percentage = percent_str(bat.state_of_charge());
-    let empty_time = time_string(bat.time_to_empty(), "left");
+pub fn low(snap: &Snapshot) -> Notification {
+    let percentage = percent_str(snap.charge());
+    let empty_time = time_string(snap.empty_time(), "left");
     let body = format!("Power level is almost empty {}{}", percentage, empty_time);
 
     let mut note = Notification::new();
     note.icon("battery-caution")
-        .summary("Battery Low")
+        .summary("Snapshot Low")
         .body(&body)
         .urgency(NotificationUrgency::Critical);
 

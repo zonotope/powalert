@@ -31,6 +31,18 @@ impl Snapshot {
     pub fn is_below(&self, low_thresh: Ratio) -> bool {
         self.charge <= low_thresh
     }
+
+    pub fn charge(&self) -> Ratio {
+        self.charge
+    }
+
+    pub fn full_time(&self) -> Option<Time> {
+        self.full_time
+    }
+
+    pub fn empty_time(&self) -> Option<Time> {
+        self.empty_time
+    }
 }
 
 impl From<&Battery> for Snapshot {
