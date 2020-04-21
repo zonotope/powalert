@@ -1,5 +1,5 @@
 use battery::units::ratio::percent;
-use battery::units::Ratio;
+use battery::units::{Ratio, Time};
 use battery::{Batteries, Battery, State};
 use std::fmt;
 
@@ -7,6 +7,8 @@ use std::fmt;
 pub struct Snapshot {
     state: State,
     charge: Ratio,
+    full_time: Option<Time>,
+    empty_time: Option<Time>,
 }
 
 impl Snapshot {
@@ -36,6 +38,8 @@ impl From<&Battery> for Snapshot {
         Self {
             state: bat.state(),
             charge: bat.state_of_charge(),
+            full_time: bat.time_to_full(),
+            empty_time: bat.time_to_empty(),
         }
     }
 }
