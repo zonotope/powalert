@@ -1,10 +1,37 @@
 mod notification;
 mod snapshot;
 
-use snapshot::{Snapshot, Trend};
+use snapshot::Snapshot;
 
 use battery::units::Ratio;
-use battery::Manager;
+use battery::{Batteries, Battery, Manager};
+
+pub struct Trend {
+    pub bat: Battery,
+    pub prev: Snapshot,
+}
+
+impl Trend {
+    pub fn from_batteries(bats: Batteries) -> Vec<Self> {
+        bats.map(|r| match r {
+            Ok(bat) => Some(bat),
+            Err(e) => {
+                log::warn!("error loading battery: {}", e);
+                None
+            }
+        })
+        .filter(|opt| opt.is_some())
+        .map(|b| Self::from(b.unwrap()))
+        .collect()
+    }
+}
+
+impl From<Battery> for Trend {
+    fn from(bat: Battery) -> Self {
+        let prev = Snapshot::from(&bat);
+        Self { bat, prev }
+    }
+}
 
 pub struct System {
     manager: Manager,

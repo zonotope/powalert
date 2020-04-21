@@ -1,6 +1,6 @@
 use battery::units::ratio::percent;
 use battery::units::{Ratio, Time};
-use battery::{Batteries, Battery, State};
+use battery::{Battery, State};
 use std::fmt;
 
 pub struct Snapshot {
@@ -58,32 +58,5 @@ impl From<&Battery> for Snapshot {
 impl fmt::Display for Snapshot {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "[{}, {}%]", self.state, self.charge.get::<percent>())
-    }
-}
-
-pub struct Trend {
-    pub bat: Battery,
-    pub prev: Snapshot,
-}
-
-impl Trend {
-    pub fn from_batteries(bats: Batteries) -> Vec<Self> {
-        bats.map(|r| match r {
-            Ok(bat) => Some(bat),
-            Err(e) => {
-                log::warn!("error loading battery: {}", e);
-                None
-            }
-        })
-        .filter(|opt| opt.is_some())
-        .map(|b| Self::from(b.unwrap()))
-        .collect()
-    }
-}
-
-impl From<Battery> for Trend {
-    fn from(bat: Battery) -> Self {
-        let prev = Snapshot::from(&bat);
-        Self { bat, prev }
     }
 }
