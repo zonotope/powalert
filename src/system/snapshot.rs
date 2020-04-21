@@ -3,7 +3,6 @@ use battery::units::{Ratio, Time};
 use battery::{Batteries, Battery, State};
 use std::fmt;
 
-#[derive(Default)]
 pub struct Snapshot {
     state: State,
     charge: Ratio,
@@ -58,7 +57,7 @@ impl From<&Battery> for Snapshot {
 
 impl fmt::Display for Snapshot {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} at {}%", self.state, self.charge.get::<percent>())
+        write!(f, "[{}, {}%]", self.state, self.charge.get::<percent>())
     }
 }
 
