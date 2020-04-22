@@ -64,8 +64,11 @@ pub fn full(_snap: &Snapshot) -> Notification {
 
 pub fn low(snap: &Snapshot) -> Notification {
     let percentage = percent_str(snap.charge());
-    let empty_time = time_string(snap.empty_time(), "left");
-    let body = format!("Power level is almost empty {}{}", percentage, empty_time);
+    let empty_string = time_string(snap.empty_time(), "left");
+    let body = format!(
+        "Power reserves are running out {}{}",
+        percentage, empty_string
+    );
 
     let mut note = Notification::new();
     note.icon("battery-caution")

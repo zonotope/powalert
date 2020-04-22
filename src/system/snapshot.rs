@@ -60,6 +60,3 @@ impl fmt::Display for Snapshot {
         write!(f, "[{}, {}%]", self.state, self.charge.get::<percent>())
     }
 }
-
-#[cfg(test)]
-mod tests {}
