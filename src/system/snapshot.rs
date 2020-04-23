@@ -76,7 +76,7 @@ mod tests {
 
         let prev = Snapshot::default();
 
-        assert_eq!(curr.did_plug(&prev), true)
+        assert!(curr.did_plug(&prev))
     }
 
     #[test]
@@ -88,7 +88,7 @@ mod tests {
 
         let prev = Snapshot::default();
 
-        assert_eq!(curr.did_unplug(&prev), true)
+        assert!(curr.did_unplug(&prev))
     }
 
     #[test]
@@ -100,7 +100,7 @@ mod tests {
 
         let prev = Snapshot::default();
 
-        assert_eq!(curr.did_fill(&prev), true)
+        assert!(curr.did_fill(&prev))
     }
 
     #[test]
@@ -114,7 +114,7 @@ mod tests {
             ..Snapshot::default()
         };
 
-        assert_eq!(curr.is_below(low_ratio), true)
+        assert!(curr.is_below(low_ratio))
     }
 
     #[test]
@@ -134,6 +134,6 @@ mod tests {
             ..Snapshot::default()
         };
 
-        assert_eq!(curr.did_deplete(&prev, low_thresh), true)
+        assert!(curr.did_deplete(&prev, low_thresh))
     }
 }
