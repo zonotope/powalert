@@ -1,8 +1,10 @@
+use std::fmt;
+
 use battery::units::ratio::percent;
 use battery::units::{Ratio, Time};
 use battery::{Battery, State};
-use std::fmt;
 
+#[derive(Default)]
 pub struct Snapshot {
     state: State,
     charge: Ratio,
@@ -58,5 +60,80 @@ impl From<&Battery> for Snapshot {
 impl fmt::Display for Snapshot {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "[{}, {}%]", self.state, self.charge.get::<percent>())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_did_plug() {
+        let curr = Snapshot {
+            state: State::Charging,
+            ..Snapshot::default()
+        };
+
+        let prev = Snapshot::default();
+
+        assert_eq!(curr.did_plug(&prev), true)
+    }
+
+    #[test]
+    fn test_did_unplug() {
+        let curr = Snapshot {
+            state: State::Discharging,
+            ..Snapshot::default()
+        };
+
+        let prev = Snapshot::default();
+
+        assert_eq!(curr.did_unplug(&prev), true)
+    }
+
+    #[test]
+    fn test_did_fill() {
+        let curr = Snapshot {
+            state: State::Full,
+            ..Snapshot::default()
+        };
+
+        let prev = Snapshot::default();
+
+        assert_eq!(curr.did_fill(&prev), true)
+    }
+
+    #[test]
+    fn test_is_below() {
+        let low_val = 0.2;
+        let low_ratio = Ratio::from(low_val);
+        let test_charge = Ratio::from(low_val - 0.1);
+
+        let curr = Snapshot {
+            charge: test_charge,
+            ..Snapshot::default()
+        };
+
+        assert_eq!(curr.is_below(low_ratio), true)
+    }
+
+    #[test]
+    fn test_did_deplete() {
+        let low_val = 0.2;
+        let low_thresh = Ratio::from(low_val);
+        let low_charge = Ratio::from(low_val - 0.1);
+        let high_charge = Ratio::from(low_val + 0.1);
+
+        let curr = Snapshot {
+            charge: low_charge,
+            ..Snapshot::default()
+        };
+
+        let prev = Snapshot {
+            charge: high_charge,
+            ..Snapshot::default()
+        };
+
+        assert_eq!(curr.did_deplete(&prev, low_thresh), true)
     }
 }
