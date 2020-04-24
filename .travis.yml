@@ -3,7 +3,7 @@ rust:
   - stable
   - beta
 before_install:
-  - sudo apt get -y install libdbus-1-dev
+  - sudo apt-get -y install libdbus-1-dev
 addons:
   apt:
     update: true
