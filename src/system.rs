@@ -7,8 +7,8 @@ use battery::units::Ratio;
 use battery::{Batteries, Battery, Manager};
 
 pub struct Trend {
-    pub bat: Battery,
-    pub prev: Snapshot,
+    bat: Battery,
+    prev: Snapshot,
 }
 
 impl Trend {
