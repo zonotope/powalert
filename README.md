@@ -16,7 +16,7 @@ in the [Arch User Repository](https://aur.archlinux.org/).
 
 Install it using the [official
 instructions](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages)
-or with an aur helper such as `[yay](https://github.com/Jguer/yay)` as in:
+or with an aur helper such as [yay](https://github.com/Jguer/yay), for example:
 
 ```
 yay -S powalert
