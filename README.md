@@ -14,12 +14,19 @@ fully charged, or when the battery power level drops below a preset threshold.
 There is an [Arch Linux Package](https://aur.archlinux.org/packages/powalert/)
 in the arch user repository.
 
+#### AUR Helper
+
 The easiest way to install powalert on Arch Linux is with an aur helper. Any AUR
 helper should work, but this example uses [yay](https://github.com/Jguer/yay):
 
 ```
 yay -S powalert
 ```
+
+#### makepkg
+
+You can install using `makepkg` by following the [official
+instructions](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages)
 
 ## Usage
 
