@@ -7,6 +7,21 @@ Powalert is a cross-platform battery and system power status notifier. Get
 notified when your computer is unplugged or plugged in, when the battery is
 fully charged, or when the battery power level drops below a preset threshold.
 
+## Install
+
+### Arch Linux
+
+There is an [Arch Linux Package](https://aur.archlinux.org/packages/powalert/)
+in the [Arch User Repository](https://aur.archlinux.org/).
+
+Install it using the [official
+instructions](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages)
+or with an aur helper such as `[yay](https://github.com/Jguer/yay)` as in:
+
+```
+yay -S powalert
+```
+
 ## Usage
 
 ```
