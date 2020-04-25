@@ -328,7 +328,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "powalert"
-version = "0.1.0-alpha2"
+version = "0.1.0"
 dependencies = [
  "battery 0.7.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
