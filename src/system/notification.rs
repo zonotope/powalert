@@ -66,13 +66,13 @@ pub fn low(snap: &Snapshot) -> Notification {
     let percentage = percent_str(snap.charge());
     let empty_string = time_string(snap.empty_time(), "left");
     let body = format!(
-        "Power reserves are running out {}{}",
+        "Reserve power is running out {}{}",
         percentage, empty_string
     );
 
     let mut note = Notification::new();
     note.icon("battery-caution")
-        .summary("Snapshot Low")
+        .summary("Battery Low")
         .body(&body)
         .urgency(NotificationUrgency::Critical);
 
