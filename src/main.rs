@@ -16,7 +16,7 @@ use battery::units::Ratio;
 
 fn cli<'a, 'b>() -> App<'a, 'b> {
     App::new("powalert")
-        .version("0.1.0")
+        .version("0.1.2")
         .about("System power notifier")
         .arg(
             Arg::with_name("threshold")
