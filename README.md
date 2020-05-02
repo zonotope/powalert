@@ -49,7 +49,7 @@ unit to run powalert automatically in the `systemd` directory.
 ## Usage
 
 ```
-powalert 0.1.0
+powalert 0.1.2
 System power notifier
 
 USAGE:
